@@ -3,8 +3,10 @@
 #----------------------------------------------------------------------------#
 
 import json
+import os
 import dateutil.parser
 import babel
+import logging
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
@@ -24,11 +26,8 @@ app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
 db.init_app(app)
-
-# TODO: connect to a local postgresql database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5432/fyyur'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 migrate = Migrate(app, db)
+logger = logging.getLogger(__name__)
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -391,9 +390,10 @@ def create_artist_submission():
 def shows():
   # displays list of shows at /shows
   # TODO: replace with real venues data.
-  show = Show.query.all()
+  # query show according to Show, Artist, Venue and join Artist and Venue filter by show time larger than current time
+  shows = db.session.query(Show, Artist, Venue).join(Artist).join(Venue).filter(Show.start_time > datetime.now()).all()
   data = []
-  for show in show:
+  for show in shows:
     data.append({
       "venue_id": show.venue_id,
       "venue_name": show.venue_name,
@@ -460,8 +460,8 @@ if __name__ == '__main__':
     app.run()
 
 # Or specify port manually:
-'''
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
-'''
+
+# if __name__ == '__main__':
+#     port = int(os.environ.get('PORT', 5000))
+#     app.run(host='0.0.0.0', port=port)
+
