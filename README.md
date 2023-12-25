@@ -105,6 +105,22 @@ Instructions
 #### Data Handling with `Flask-WTF` Forms
 The starter codes use an interactive form builder library called [Flask-WTF](https://flask-wtf.readthedocs.io/). This library provides useful functionality, such as form validation and error handling. You can peruse the Show, Venue, and Artist form builders in `forms.py` file. The WTForms are instantiated in the `app.py` file. For example, in the `create_shows()` function, the Show form is instantiated from the command: `form = ShowForm()`. To manage the request from Flask-WTF form, each field from the form has a `data` attribute containing the value from user input. For example, to handle the `venue_id` data from the Venue form, you can use: `show = Show(venue_id=form.venue_id.data)`, instead of using `request.form['venue_id']`.
 
+#### DB mirgration in Mac
+
+```
+ brew install postgresql@15
+ brew services start postgresql@15
+ locate psql | grep /bin (See the path of psql use export)
+ export PATH=/opt/homebrew/Cellar/postgresql@15/15.5_1/bin:$PATH
+ psql postgres 
+ psql \password
+\q
+createdb fyyur
+flask db init
+flask db migrate
+flask db upgrade
+```
+
 Acceptance Criteria
 -----
 
