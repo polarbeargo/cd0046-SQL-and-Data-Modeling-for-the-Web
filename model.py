@@ -18,16 +18,12 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-
+  
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
     website = db.Column(db.String(120))
-    shows = db.relationship('Show', backref=db.backref('venues', lazy='false'))
+
 def __repr__(self):
       return f'<Venue {self.id} {self.name} {self.city} {self.state} {self.address} {self.phone} {self.image_link} {self.facebook_link} {self.website} {self.shows}>'
-# import libraries
-from flask_sqlalchemy import SQLAlchemy
-    
-db = SQLAlchemy()
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -43,7 +39,7 @@ class Artist(db.Model):
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
     website = db.Column(db.String(120))
-    shows = db.relationship('Show', backref=db.backref('venues', lazy='false'))
+
 def __repr__(self):
       return f'<Artist {self.id} {self.name} {self.city} {self.state} {self.phone} {self.genres} {self.image_link} {self.facebook_link} {self.website} {self.shows}>'
 
@@ -52,9 +48,11 @@ class Show(db.Model):
     __tablename__ = 'Show'
     
     id = db.Column(db.Integer, primary_key=True)
-    venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'))
-    artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'))
+    venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable=False)
+    artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable=False)
     start_time = db.Column(db.DateTime)
+    venue = db.relationship('Venue', backref='Show', lazy=True)
+    artist = db.relationship('Artist', backref='Show', lazy=True)
     
 def __repr__(self):
       return f'<Show {self.id} {self.venue_id} {self.artist_id} {self.start_time}>'
