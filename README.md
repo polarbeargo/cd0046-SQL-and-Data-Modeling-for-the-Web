@@ -117,7 +117,17 @@ The starter codes use an interactive form builder library called [Flask-WTF](htt
 \q
 createdb fyyur
 flask db init
-flask db migrate
+flask db migrate -m "Initial migration."
+flask db upgrade
+```
+- To debug the database, use the following commands:
+```
+psql postgres 
+DROP DATABASE IF EXISTS fyyur;
+\q
+createdb fyyur
+flask db init
+flask db migrate -m "Initial migration."
 flask db upgrade
 ```
 
