@@ -219,38 +219,26 @@ def search_artists():
 def show_artist(artist_id):
   # shows the artist page with the given artist_id
   # TODO: replace with real artist data from the artist table, using artist_id
-  artist_found = Artist.query.get(artist_id)
-  if not artist_found:
-    return render_template('errors/404.html')
+  artist_found = Artist.query.get_or_404(artist_id)
+  past_vernues = []
+  upcoming_vernues = []
+  for venue in artist_found:
+    tmp_venue = {
+      "venue_id": venue.venue_id,
+      "venue_name": venue.venue_name,
+      "venue_image_link": venue.venue_image_link,
+      "start_time": venue.start_time.strftime('%Y-%m-%d %H:%M:%S')
+    }
+    if venue.start_time >= datetime.now():
+      upcoming_vernues.append(tmp_venue)
+    else:
+      past_vernues.append(tmp_venue)
   
-  data = {
-    "id": artist_found.id,
-    "name": artist_found.name,
-    "genres": artist_found.genres,
-    "city": artist_found.city,
-    "state": artist_found.state,
-    "phone": artist_found.phone,
-    "website": artist_found.website,
-    "facebook_link": artist_found.facebook_link,
-    "seeking_venue": artist_found.seeking_venue,
-    "seeking_description": artist_found.seeking_description,
-    "image_link": artist_found.image_link,
-    "past_shows": [{
-      "venue_id": artist_found.id,
-      "venue_name": artist_found.name,
-      "venue_image_link": artist_found.image_link,
-      "start_time": "2019-05-21T21:30:00.000Z"
-    }],
-    "upcoming_shows": [{
-      "venue_id": artist_found.id,
-      "venue_name": artist_found.name,
-      "venue_image_link": artist_found.image_link,
-      "start_time": "2035-04-01T20:00:00.000Z"
-    }],
-    "past_shows_count": 1,
-    "upcoming_shows_count": 1,
-  }
-  
+  data =vars(artist_found)
+  data['past_shows'] = past_vernues
+  data['upcoming_shows'] = upcoming_vernues
+  data['past_shows_count'] = len(past_vernues)
+  data['upcoming_shows_count'] = len(upcoming_vernues)
   return render_template('pages/show_artist.html', artist=data)
 
 #  Update
